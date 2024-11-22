@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  haproxy:
+    image: shukumar7042996698/docker-challenge:v1
+    container_name: haproxy
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  scraper:
+    build:
+      context: .
+      dockerfile: dockerfile  # Build using the main Dockerfile
+    container_name: scraper
+    working_dir: /app
+    volumes:
+      - ./scraper:/app/scraper  # Mount the scraper folder to /app/scraper in the container
+    command: |
+      bash -c "python3 /app/scraper/scraper.py"  # Install dependencies and run the scraper
+    ports:
+      - "5000:5000"  # Ensure the scraper port is properly exposed
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
